@@ -52,9 +52,14 @@ API
 #stop()
   - (returns a promise) stop the server
 
+#restart()
+  - (returns a promise) restart the server
+
+
 The server is started/stopped using `systemctl start/stop isc-dhcp-server` command.
 
 License
 ---
 
 MIT
+
