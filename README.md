@@ -1,9 +1,10 @@
 
-### node-isc-dhcp-server
+node-isc-dhcp-server
+---
 
 NodeJS pagckage for managing [isc-dhcp-server](https://wiki.debian.org/DHCP_Server).
 
-Basic Usage
+Usage
 ---
 
 ```js
@@ -14,33 +15,47 @@ var s = dhcp.createServer({
   range: [
     "192.168.3.10", "192.168.3.99"
   ],
-  forceOptions: ['hostname'], // Options that need to be sent, even if they were not requested
-  randomIP: true, // Get random new IP from pool instead of keeping one ip
   static: {
     "11:22:33:44:55:66": "192.168.3.100"
   },
 
-  // Option settings (there are MUCH more)
+  // Option settings
   netmask: '255.255.255.0',
   router: [
     '192.168.0.1'
   ],
   dns: ["8.8.8.8", "8.8.4.4"],
-  hostname: "kacknup",
   broadcast: '192.168.0.255',
   server: '192.168.0.1', // This is us
-  bootFile: function (req, res) {
-
-    // res.ip - the actual ip allocated for the client
-
-    if (req.clientId === 'foo bar') {
-      return 'x86linux.0';
-    } else {
-      return 'x64linux.0';
-    }
-  }
 });
 
-### LICENSE
+s.start().then(() => {
+  console.log('server started')
+}).catch(e => {
+  console.log('Error: ', e)
+})
+```
+
+API
+---
+
+#createServer(options)
+  - range (array) - start/end of ip lease loop
+  - static (object) - staic mappings of mac/ip reservations
+  - netmask (string) - network mask
+  - router(array) - ip/s of gateway(s)
+  - dns(array) - dns servers
+  - broadcast(string) - broadcast address
+
+#start()
+  - (returns a promise) start the server
+  
+#stop()
+  - (returns a promise) stop the server
+
+The server is started/stopped using `systemctl start/stop isc-dhcp-server` command.
+
+License
+---
 
 MIT
