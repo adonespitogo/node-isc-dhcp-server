@@ -4,7 +4,7 @@
   "description": "NodeJS package to programatically manage an isc-dhcp-server.",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "nyc mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/adonespitogo/node-isc-dhcp-server/issues"
   },
-  "homepage": "https://github.com/adonespitogo/node-isc-dhcp-server#readme"
+  "homepage": "https://github.com/adonespitogo/node-isc-dhcp-server#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.1",
+    "nyc": "^14.1.1",
+    "sinon": "^7.5.0"
+  }
 }
