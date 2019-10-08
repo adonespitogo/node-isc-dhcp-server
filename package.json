@@ -1,0 +1,24 @@
+{
+  "name": "isc-dhcp-server",
+  "version": "0.0.1",
+  "description": "NodeJS package to programatically manage an isc-dhcp-server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonespitogo/node-isc-dhcp-server.git"
+  },
+  "keywords": [
+    "isc-dhcp-server",
+    "dhcp",
+    "network"
+  ],
+  "author": "Adones Pitogo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adonespitogo/node-isc-dhcp-server/issues"
+  },
+  "homepage": "https://github.com/adonespitogo/node-isc-dhcp-server#readme"
+}
