@@ -2,6 +2,7 @@
 
 var subnet_tpl = require('./templates/subnet.js')
 var static_tpl = require('./templates/static.js')
+var default_tpl = require('./templates/default_template.js')
 
 exports.generateSubnet = (config) => {
 
@@ -17,7 +18,7 @@ exports.generateSubnet = (config) => {
   })
   options_dns += ';'
 
-  return subnet_tpl
+  var result = subnet_tpl
     .replace('[RANGE_START]', config.range[0])
     .replace('[RANGE_END]', config.range[1])
     .replace('[NETWORK_ADDRESS]', config.network)
@@ -25,6 +26,7 @@ exports.generateSubnet = (config) => {
     .replace('[BROADCAST_ADDRESS]', config.broadcast)
     .replace('[OPTION_ROUTERS]', options_router)
     .replace('[OPTION_DNS]', options_dns)
+  return result
 }
 
 exports.generateStatic = (hosts) => {
@@ -36,4 +38,11 @@ exports.generateStatic = (hosts) => {
       .replace('[IP]', h.ip_address)
   })
   return tpl
+}
+
+exports.generateConfig = (config) => {
+  var result = exports.generateSubnet(config)
+  var static_tpl = exports.generateStatic(config.static)
+  result = result.replace('[STATIC]', static_tpl)
+  return default_tpl + result
 }

@@ -7,5 +7,6 @@ subnet [NETWORK_ADDRESS] netmask [NETMASK] {
   min-lease-time 43199;
   max-lease-time 43201;
   [OPTION_DNS]
+[STATIC]
 }
 `

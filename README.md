@@ -15,9 +15,7 @@ var s = dhcp.createServer({
   range: [
     "192.168.3.10", "192.168.3.99"
   ],
-  static: {
-    "11:22:33:44:55:66": "192.168.3.100"
-  },
+  static: [{hostname: 'host1', mac_address: 'xx:xx:xx:xx:xx:xx', ip_address: '10.0.2.3'}]
 
   // Option settings
   netmask: '255.255.255.0',
@@ -40,7 +38,7 @@ API
 
 #createServer(options)
   - range (array) - start/end of ip lease loop
-  - static (object) - staic mappings of mac/ip reservations
+  - static (array) - staic mappings of mac/ip reservations
   - netmask (string) - network mask
   - router(array) - ip/s of gateway(s)
   - dns(array) - dns servers
