@@ -2,6 +2,7 @@
 
 var service = 'isc-dhcp-server'
 var {spawn} = require('child_process')
+var actions = ['start', 'stop', 'restart']
 
 exports._sendCommand = (action) => {
   return new Promise((resolve, reject) => {
@@ -15,8 +16,9 @@ exports._sendCommand = (action) => {
   })
 }
 
-exports.start = () => exports._sendCommand('start')
-exports.restart = () => exports._sendCommand('restart')
-exports.stop = () => exports._sendCommand('stop')
+actions.forEach(a => {
+  exports[a] = () => exports._sendCommand(a)
+})
+
 
 
