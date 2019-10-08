@@ -11,66 +11,54 @@ var spawn_instance = {
   }
 }
 var spawn = sinon.fake((cmd, args) => spawn_instance)
-var start_stop;
+var service;
 
-describe('Testing start/stop methods', () => {
+describe('Testing start/stop/restart methods', () => {
 
   beforeEach(() => {
-    start_stop = proxyquire(file, {
+    service = proxyquire(file, {
       child_process: {spawn}
     })
   })
 
-  describe('start() method', () => {
+  describe('_sendCommand() method', () => {
     it('should resolve is status code is 0', () => {
       code = 0
-      return start_stop.start()
+      return service.start()
         .then(() => {
           sinon.assert.calledWithExactly(spawn, 'systemctl', ['start', 'isc-dhcp-server'])
         })
     })
     it('should reject if status code is not 0', () => {
       code = 2
-      return start_stop.start()
+      return service.start()
         .then(expect.fail, e => {
           expect(e).to.equal('Unable to start DHCP server')
         })
     })
   })
 
-  describe('stop() method', () => {
-    it('should resolve is status code is 0', () => {
-      code = 0
-      return start_stop.stop()
-        .then(() => {
-          sinon.assert.calledWithExactly(spawn, 'systemctl', ['stop', 'isc-dhcp-server'])
-        })
-    })
-    it('should reject if status code is not 0', () => {
-      code = 2
-      return start_stop.stop()
-        .then(expect.fail, e => {
-          expect(e).to.equal('Unable to stop DHCP server')
-        })
-    })
-  })
+  describe('start/stop/restart methods', () => {
 
-  describe('restart() method', () => {
-    it('should resolve is status code is 0', () => {
-      code = 0
-      return start_stop.restart()
-        .then(() => {
-          sinon.assert.calledWithExactly(spawn, 'systemctl', ['restart', 'isc-dhcp-server'])
-        })
-    })
-    it('should reject if status code is not 0', () => {
-      code = 2
-      return start_stop.restart()
-        .then(expect.fail, e => {
-          expect(e).to.equal('Unable to restart DHCP server')
-        })
-    })
-  })
+    var cmd_stub
 
+    beforeEach(() => {
+      cmd_stub = sinon.stub(service, '_sendCommand').resolves()
+    })
+
+    it('should send proper commands', () => {
+      var actions = ['start', 'stop', 'restart']
+      return Promise.all(actions.map(action => {
+        var fn = service[action]
+        return fn().then(() => {
+          sinon.assert.calledWithExactly(cmd_stub, action)
+        })
+      }))
+    })
+
+    afterEach(() => cmd_stub.restore())
+
+  })
 
 })
+
