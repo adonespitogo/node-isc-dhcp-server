@@ -22,31 +22,35 @@ describe('Testing start/stop/restart methods', () => {
   })
 
   describe('_sendCommand() method', () => {
-    it('should resolve is status code is 0', () => {
+
+    it('should resolve if status code is 0 for all commands', () => {
       code = 0
-      return service.start()
-        .then(() => {
-          sinon.assert.calledWithExactly(spawn, 'systemctl', ['start', 'isc-dhcp-server'])
+      var actions = ['start', 'stop', 'restart']
+      return Promise.all(actions.map(action => {
+        var fn = service[action]
+        return fn().then(() => {
+          sinon.assert.calledWithExactly(spawn, 'systemctl', [action, 'isc-dhcp-server'])
         })
+      }))
     })
-    it('should reject if status code is not 0', () => {
-      code = 2
-      return service.start()
-        .then(expect.fail, e => {
-          expect(e).to.equal('Unable to start DHCP server')
+
+    it('should reject if status code isnt 0 for all commands', () => {
+      code = 3
+      var actions = ['start', 'stop', 'restart']
+      return Promise.all(actions.map(action => {
+        var fn = service[action]
+        return fn().then(expect.fail, e => {
+          sinon.assert.calledWithExactly(spawn, 'systemctl', [action, 'isc-dhcp-server'])
+          expect(e).to.equal(`Unable to ${action} DHCP server`)
         })
+      }))
     })
+
   })
 
   describe('start/stop/restart methods', () => {
-
-    var cmd_stub
-
-    beforeEach(() => {
-      cmd_stub = sinon.stub(service, '_sendCommand').resolves()
-    })
-
     it('should send proper commands', () => {
+      var cmd_stub = sinon.stub(service, '_sendCommand').resolves()
       var actions = ['start', 'stop', 'restart']
       return Promise.all(actions.map(action => {
         var fn = service[action]
@@ -54,9 +58,8 @@ describe('Testing start/stop/restart methods', () => {
           sinon.assert.calledWithExactly(cmd_stub, action)
         })
       }))
+        .then(() => cmd_stub.restore())
     })
-
-    afterEach(() => cmd_stub.restore())
 
   })
 
