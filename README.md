@@ -25,8 +25,7 @@ var s = dhcp.createServer({
     '192.168.0.1'
   ],
   dns: ["8.8.8.8", "8.8.4.4"],
-  broadcast: '192.168.0.255',
-  server: '192.168.0.1', // This is us
+  broadcast: '192.168.0.255'
 });
 
 s.start().then(() => {
