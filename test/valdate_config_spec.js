@@ -17,7 +17,8 @@ describe('Testing validate_config.js', () => {
       netmask: 'my netmaskk',
       router: 'my router ip',
       dns: ['dns1', 'dns2'],
-      broadcast: 'my broadcast'
+      broadcast: 'my broadcast',
+      static: []
     }
   })
 
@@ -96,5 +97,20 @@ describe('Testing validate_config.js', () => {
       expect(e).to.equal('dns option must be of type string or array')
     })
   })
+
+  it('should reject if static option is not array', () => {
+    config.static = {}
+    return validate_config(config).then(expect.fail, e => {
+      expect(e).to.eql('static option must be of type array')
+    })
+  })
+
+  it('should add empty array as placeholder for static option if none is provided', () => {
+    config.static = null
+    return validate_config(config).then(cfg => {
+      expect(cfg.static).to.eql([])
+    })
+  })
+
 
 })
