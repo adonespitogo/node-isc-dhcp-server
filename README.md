@@ -6,6 +6,11 @@ NodeJS pagckage for managing [isc-dhcp-server](https://wiki.debian.org/DHCP_Serv
 
 NOTE: For now, only basic options can be configured. Please feel free to add more by sendign PR :)
 
+Installation
+---
+
+`npm i --save isc-dhcp-server`
+
 Usage
 ---
 
