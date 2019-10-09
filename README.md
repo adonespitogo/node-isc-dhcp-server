@@ -8,19 +8,23 @@ Usage
 ---
 
 ```js
-var dhcp = require('dhcp');
+var dhcp = require('isc-dhcp-server');
 
 var s = dhcp.createServer({
   interface: 'eth0',
   range: [
     "192.168.3.10", "192.168.3.99"
   ],
-  static: [{hostname: 'host1', mac_address: 'xx:xx:xx:xx:xx:xx', ip_address: '10.0.2.3'}]
+  static: [
+    {
+      hostname: 'host1',
+      mac_address: 'xx:xx:xx:xx:xx:xx',
+      ip_address: '10.0.2.3'
+    }
+  ]
   netmask: '255.255.255.0',
-  router: [
-    '192.168.0.1'
-  ],
-  dns: ["8.8.8.8", "8.8.4.4"],
+  router: '192.168.0.1',        // can be string or array
+  dns: ["8.8.8.8", "8.8.4.4"],  // can be string or array
   broadcast: '192.168.0.255'
 });
 
@@ -34,7 +38,7 @@ s.start().then(() => {
 API
 ---
 
-#createServer(options)
+#dhcp.createServer(options)
   - range (array) - start/end of ip lease loop
   - static (array) - staic mappings of mac/ip reservations
   - netmask (string) - network mask
@@ -42,13 +46,13 @@ API
   - dns(array) - dns servers
   - broadcast(string) - broadcast address
 
-#start()
+#server.start()
   - (returns a promise) start the server
   
-#stop()
+#server.stop()
   - (returns a promise) stop the server
 
-#restart()
+#server.restart()
   - (returns a promise) restart the server
 
 
