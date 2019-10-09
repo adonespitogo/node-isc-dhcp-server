@@ -1,8 +1,10 @@
 
-node-isc-dhcp-server
+Package Name: isc-dhcp-server
 ---
 
 NodeJS pagckage for managing [isc-dhcp-server](https://wiki.debian.org/DHCP_Server).
+
+NOTE: For now, only basic options can be configured. Please feel free to add more by sendign PR :)
 
 Usage
 ---
@@ -38,7 +40,7 @@ s.start().then(() => {
 API
 ---
 
-#dhcp.createServer(options)
+***dhcp.createServer(options)***
   - range (array) - start/end of ip lease loop
   - static (array) - staic mappings of mac/ip reservations
   - netmask (string) - network mask
@@ -46,13 +48,13 @@ API
   - dns(array) - dns servers
   - broadcast(string) - broadcast address
 
-#server.start()
+***server.start()***
   - (returns a promise) start the server
   
-#server.stop()
+***server.stop()***
   - (returns a promise) stop the server
 
-#server.restart()
+***server.restart()***
   - (returns a promise) restart the server
 
 
