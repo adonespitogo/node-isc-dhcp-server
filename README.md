@@ -11,13 +11,11 @@ Usage
 var dhcp = require('dhcp');
 
 var s = dhcp.createServer({
-  // System settings
+  interface: 'eth0',
   range: [
     "192.168.3.10", "192.168.3.99"
   ],
   static: [{hostname: 'host1', mac_address: 'xx:xx:xx:xx:xx:xx', ip_address: '10.0.2.3'}]
-
-  // Option settings
   netmask: '255.255.255.0',
   router: [
     '192.168.0.1'

@@ -2,7 +2,7 @@
 
 var subnet_tpl = require('./templates/subnet.js')
 var static_tpl = require('./templates/static.js')
-var default_tpl = require('./templates/default_template.js')
+var default_tpl = require('./templates/default.js')
 
 exports.generateSubnet = (config) => {
 
@@ -45,4 +45,11 @@ exports.generateConfig = (config) => {
   var static_tpl = exports.generateStatic(config.static)
   result = result.replace('[STATIC]', static_tpl)
   return default_tpl + result
+}
+
+exports.iscDefaultConfig = (config) => {
+  return `
+INTERFACES="${config.interface}"
+INTERFACESv4="${config.interface}"
+`
 }

@@ -4,7 +4,7 @@ var proxyquire = require('proxyquire')
 var expect = require('chai').expect
 var sinon = require('sinon')
 var tpl = require('../src/template.js')
-var default_tpl = require('../src/templates/default_template.js')
+var default_tpl = require('../src/templates/default.js')
 
 describe('config template generator', () => {
 
@@ -93,4 +93,17 @@ ${tpl.generateStatic(config.static)}
     })
   })
 
+  describe('iscDefaultConfig() method', () => {
+    it('should generate config for /etc/default/isc-dhcp-server', () => {
+      var config = {interface: 'eth0'}
+      var expected_output = `
+INTERFACES="eth0"
+INTERFACESv4="eth0"
+`
+      var output = tpl.iscDefaultConfig(config)
+      expect(output).to.equal(expected_output)
+    })
+  })
+
 })
+
