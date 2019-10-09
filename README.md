@@ -28,7 +28,8 @@ var s = dhcp.createServer({
       mac_address: 'xx:xx:xx:xx:xx:xx',
       ip_address: '10.0.2.3'
     }
-  ]
+  ],
+  network: '192.168.0.0',
   netmask: '255.255.255.0',
   router: '192.168.0.1',        // can be string or array
   dns: ["8.8.8.8", "8.8.4.4"],  // can be string or array
