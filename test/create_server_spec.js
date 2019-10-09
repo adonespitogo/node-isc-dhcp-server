@@ -3,30 +3,105 @@ var proxyquire = require('proxyquire')
 var expect = require('chai').expect
 var sinon = require('sinon')
 
-var template = require('../src/template.js')
-var service = require('../src/service.js')
-var writer = {
-  iscDefaultConfig: sinon.fake.resolves(),
-  dhcpdConfig: sinon.fake.resolves()
-}
-
-var dhcp;
+var dhcp,
+  config,
+  new_config,
+  validate,
+  template,
+  service,
+  writer;
 
 describe('Testing isc-dhcp-server package', () => {
 
   beforeEach(() => {
+    template = require('../src/template.js')
+    service = require('../src/service.js')
+    writer = {
+      iscDefaultConfig: sinon.fake.resolves(),
+      dhcpdConfig: sinon.fake.resolves()
+    }
+    config = {
+      interface: 'eth0',
+      network: 'my network',
+      range: ['start ip', 'end ip'],
+      netmask: 'my netmaskk',
+      router: 'my router ip',
+      dns: ['dns1', 'dns2'],
+      broadcast: 'my broadcast'
+    }
+
+    new_config = Object.assign({}, config)
+    new_config.router = ['new router ip']
+    validate = sinon.fake.resolves(new_config)
+
     dhcp = proxyquire('../src/index.js', {
+      './validate_config.js': validate,
       './service.js': service,
       './template.js': template,
       './writer.js': writer
     })
   })
 
-  describe('createServer() method', () => {
-    it('should create server instance', () => {
-      var config = {}
+  it('should createServer method', () => {
+    var s = dhcp.createServer(config)
+    expect(s.start).to.be.a('function')
+    expect(s.restart).to.be.a('function')
+    expect(s.stop).to.be.a('function')
+  })
+
+  describe('prestart() method', () => {
+    it('should validate, write and start the service', () => {
       var s = dhcp.createServer(config)
-      expect(s).to.be.instanceOf(dhcp.Server)
+      return s.prestart()
+        .then(() => {
+          sinon.assert.calledWithExactly(validate, config)
+          sinon.assert.calledWithExactly(writer.iscDefaultConfig, new_config)
+          sinon.assert.calledWithExactly(writer.dhcpdConfig, new_config)
+        })
+    })
+  })
+
+  describe('start method', () => {
+    it('should call prestart before calling service', () => {
+      var s = dhcp.createServer(config)
+      var prestart_stub = sinon.stub(s, 'prestart').resolves()
+      var service_start_stub = sinon.stub(service, 'start').resolves()
+      return s.start()
+        .then(() => {
+          sinon.assert.calledOnce(prestart_stub)
+          sinon.assert.calledOnce(service_start_stub)
+          expect(prestart_stub.calledBefore(service_start_stub)).to.be.true
+          prestart_stub.restore()
+          service_start_stub.restore()
+        })
+    })
+  })
+
+  describe('restart method', () => {
+    it('should call prestart before calling service', () => {
+      var s = dhcp.createServer(config)
+      var prestart_stub = sinon.stub(s, 'prestart').resolves()
+      var service_start_stub = sinon.stub(service, 'restart').resolves()
+      return s.restart()
+        .then(() => {
+          sinon.assert.calledOnce(prestart_stub)
+          sinon.assert.calledOnce(service_start_stub)
+          expect(prestart_stub.calledBefore(service_start_stub)).to.be.true
+          prestart_stub.restore()
+          service_start_stub.restore()
+        })
+    })
+  })
+
+  describe('stop method', () => {
+    it('should call servie.stop', () => {
+      var s = dhcp.createServer(config)
+      var service_stop_stub = sinon.stub(service, 'stop').resolves()
+      return s.stop()
+        .then(() => {
+          sinon.assert.calledOnce(service_stop_stub)
+          service_stop_stub.restore()
+        })
     })
   })
 
