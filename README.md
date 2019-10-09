@@ -1,5 +1,5 @@
 
-Package Name: isc-dhcp-server
+Package: isc-dhcp-server
 ---
 
 NodeJS pagckage for managing [isc-dhcp-server](https://wiki.debian.org/DHCP_Server).
