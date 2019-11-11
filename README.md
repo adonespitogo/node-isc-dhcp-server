@@ -11,7 +11,7 @@ Installation
 
 `npm i --save isc-dhcp-server`
 
-Usage
+Simple Usage
 ---
 
 ```js
@@ -26,14 +26,14 @@ var s = dhcp.createServer({
     {
       hostname: 'host1',
       mac_address: 'xx:xx:xx:xx:xx:xx',
-      ip_address: '10.0.2.3'
+      ip_address: '192.168.3.2'
     }
   ],
-  network: '192.168.0.0',
+  network: '192.168.3.0',
   netmask: '255.255.255.0',
-  router: '192.168.0.1',        // can be string or array
+  router: '192.168.3.1',        // can be string or array
   dns: ["8.8.8.8", "8.8.4.4"],  // can be string or array
-  broadcast: '192.168.0.255'
+  broadcast: '192.168.3.255'
 });
 
 s.start().then(() => {
@@ -43,10 +43,65 @@ s.start().then(() => {
 })
 ```
 
+Multiple Interfaces and Subnets
+---
+
+```js
+var dhcp = require('isc-dhcp-server');
+
+var subnet1 = {
+  interface: 'eth0',
+  range: [
+    "192.168.3.10", "192.168.3.99"
+  ],
+  static: [
+    {
+      hostname: 'host1',
+      mac_address: 'xx:xx:xx:xx:xx:xx',
+      ip_address: '192.168.3.2'
+    }
+  ],
+  network: '192.168.3.0',
+  netmask: '255.255.255.0',
+  router: '192.168.3.1',        // can be string or array
+  dns: ["8.8.8.8", "8.8.4.4"],  // can be string or array
+  broadcast: '192.168.3.255'
+}
+
+var subnet2 = {
+  interface: 'eth1',
+  range: [
+    "192.168.4.10", "192.168.4.99"
+  ],
+  static: [
+    {
+      hostname: 'host1',
+      mac_address: 'xx:xx:xx:xx:xx:xx',
+      ip_address: '192.168.4.2'
+    }
+  ],
+  network: '192.168.4.0',
+  netmask: '255.255.255.0',
+  router: '192.168.4.1',        // can be string or array
+  dns: ["8.8.8.8", "8.8.4.4"],  // can be string or array
+  broadcast: '192.168.4.255'
+}
+
+var s = dhcp.createServer([subnet1, subnet2]);
+
+s.start().then(() => {
+  console.log('server started')
+}).catch(e => {
+  console.log('Error: ', e)
+})
+```
+
+
 API
 ---
 
-***dhcp.createServer(options)***
+***dhcp.createServer(options | [options])***
+  - options - can be an object or array of option
   - range (array) - start/end of ip lease loop
   - static (array) - staic mappings of mac/ip reservations
   - netmask (string) - network mask

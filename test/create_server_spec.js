@@ -1,3 +1,4 @@
+'use strict'
 
 var proxyquire = require('proxyquire')
 var expect = require('chai').expect
@@ -49,14 +50,46 @@ describe('Testing isc-dhcp-server package', () => {
     expect(s.stop).to.be.a('function')
   })
 
+  describe('validate() method', () => {
+    describe('when config is object', () => {
+
+      it('should indicate which interace has config error', () => {
+        var error = 'some error'
+        validate = sinon.fake.resolves(Promise.reject(error))
+        dhcp = proxyquire('../src/index.js', {
+          './validate_config.js': validate,
+        })
+        var s = dhcp.createServer(config)
+        return s.validate().then(expect.fail, e => {
+          expect(e).to.equal(`Configuration error for interface ${config.interface}: ${error}`)
+        })
+      })
+
+      it('should validate array config', () => {
+        var error = 'some error'
+        validate = sinon.fake.resolves(config)
+        dhcp = proxyquire('../src/index.js', {
+          './validate_config.js': validate,
+        })
+        var s = dhcp.createServer([config])
+        return s.validate().then(cfg => {
+          expect(cfg).to.eql([config])
+          sinon.assert.calledWithExactly(validate, config)
+        })
+      })
+
+    })
+
+  })
+
   describe('prestart() method', () => {
     it('should validate, write and start the service', () => {
-      var s = dhcp.createServer(config)
+      var s = dhcp.createServer([config])
       return s.prestart()
         .then(() => {
           sinon.assert.calledWithExactly(validate, config)
-          sinon.assert.calledWithExactly(writer.iscDefaultConfig, new_config)
-          sinon.assert.calledWithExactly(writer.dhcpdConfig, new_config)
+          sinon.assert.calledWithExactly(writer.iscDefaultConfig, [new_config])
+          sinon.assert.calledWithExactly(writer.dhcpdConfig, [new_config])
         })
     })
   })

@@ -9,9 +9,20 @@ class Server {
   constructor(config) {
     this.config = config
   }
+  validate() {
+    var config = Array.isArray(this.config)? this.config : [this.config]
+    return Promise.all(config.map(c => {
+      var iface = c.interface
+      return validate(c).catch(e => {
+        var error = `Configuration error for interface ${iface}: ${e.toString()}`
+        return Promise.reject(error)
+      })
+    }))
+
+  }
   prestart() {
     var config = this.config
-    return validate(config)
+    return this.validate(config)
       .then(cfg => {
         return Promise.all([
           writer.iscDefaultConfig(cfg),

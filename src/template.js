@@ -26,10 +26,13 @@ exports.generateSubnet = (config) => {
     .replace('[BROADCAST_ADDRESS]', config.broadcast)
     .replace('[OPTION_ROUTERS]', options_router)
     .replace('[OPTION_DNS]', options_dns)
+    .replace('[STATIC]', exports.generateStatic(config.static))
   return result
 }
 
 exports.generateStatic = (hosts) => {
+  if (!hosts) return ''
+  if (!hosts.length) return ''
   var tpl = ''
   hosts.forEach((h, i) => {
     tpl += static_tpl
@@ -41,15 +44,27 @@ exports.generateStatic = (hosts) => {
 }
 
 exports.generateConfig = (config) => {
-  var result = exports.generateSubnet(config)
-  var static_tpl = exports.generateStatic(config.static)
-  result = result.replace('[STATIC]', static_tpl)
-  return default_tpl + result
+  config = Array.isArray(config)? config : [config]
+  var result = config.reduce((fin, cfg) => {
+    return fin + '\n' + exports.generateSubnet(cfg).trim() 
+  }, '')
+
+  var ret = default_tpl + `
+${result.trim()}
+`
+  return ret.trim()
+
 }
 
 exports.iscDefaultConfig = (config) => {
+  var config = Array.isArray(config) ? config : [config]
+  var interfaces = config.reduce((fin, current) => {
+    fin += ' ' + current.interface
+    return fin.trim()
+  }, '')
+
   return `
-INTERFACES="${config.interface}"
-INTERFACESv4="${config.interface}"
+INTERFACES="${interfaces}"
+INTERFACESv4="${interfaces}"
 `
 }
