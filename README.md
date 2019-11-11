@@ -101,7 +101,7 @@ API
 ---
 
 ***dhcp.createServer(options | [options])***
-  - options - can be and object or array of option
+  - options - can be an object or array of option
   - range (array) - start/end of ip lease loop
   - static (array) - staic mappings of mac/ip reservations
   - netmask (string) - network mask
