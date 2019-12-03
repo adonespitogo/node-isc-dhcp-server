@@ -13,12 +13,14 @@ class Server {
     var config = Array.isArray(this.config)? this.config : [this.config]
     return Promise.all(config.map(c => {
       var iface = c.interface
-      return validate(c).catch(e => {
+      return validate.validateConfig(c).catch(e => {
         var error = `Configuration error for interface ${iface}: ${e.toString()}`
         return Promise.reject(error)
       })
     }))
-
+      .then(configs => {
+        return validate.validateAll(configs).then(() => configs)
+      })
   }
   prestart() {
     var config = this.config
