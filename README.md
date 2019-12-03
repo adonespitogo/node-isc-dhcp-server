@@ -1,5 +1,5 @@
 
-Package: isc-dhcp-server
+isc-dhcp-server [![Build Status](https://travis-ci.com/adonespitogo/node-isc-dhcp-server.svg?branch=master)](https://travis-ci.com/adonespitogo/node-isc-dhcp-server)
 ---
 
 NodeJS pagckage for managing [isc-dhcp-server](https://wiki.debian.org/DHCP_Server).
