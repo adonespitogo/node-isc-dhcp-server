@@ -109,6 +109,10 @@ API
   - dns(array) - dns servers
   - broadcast(string) - broadcast address
 
+
+***server.validate()***
+  - (returns a promise) validate configuration (also called before `server.start()` and `server.restart()`)
+
 ***server.start()***
   - (returns a promise) start the server
   
