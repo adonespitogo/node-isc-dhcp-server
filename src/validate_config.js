@@ -3,6 +3,15 @@
 var is_ip = require('is-ip')
 var { Netmask } = require('netmask')
 
+// https://stackoverflow.com/questions/46200086/how-to-check-if-a-given-ip-falls-between-a-given-ip-range-using-node-js
+function IPtoNum(ip){
+  return Number(
+    ip.split(".")
+      .map(d => ("000"+d).substr(-3) )
+      .join("")
+  );
+}
+
 exports.validateConfig = (config) => {
   return new Promise((resolve, reject) => {
     var required_opts = [
@@ -58,6 +67,9 @@ exports.validateConfig = (config) => {
 
     if (!block.contains(config.range[1]))
       return reject('Invalid DHCP pool range')
+
+    if (IPtoNum(config.range[0]) > IPtoNum(config.range[1]))
+      return reject('DHCP pool start must be less than pool end')
 
     config.router.forEach(r => {
       if (!is_ip(r))
