@@ -77,6 +77,13 @@ describe('Testing validate_config.js', () => {
 
 
     describe('range option', () => {
+      it('should reject if start is greater than end pool', () => {
+        config.range = ["192.168.1.100", "192.168.1.2"]
+        return validate.validateConfig(config)
+          .then(expect.fail, e => {
+            expect(e).to.equal('DHCP pool start must be less than pool end')
+          })
+      })
       it('should reject if range is not array', () => {
         config.range = 'adfdasf'
         return validate.validateConfig(config).then(expect.fail, e => {
