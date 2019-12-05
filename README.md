@@ -1,5 +1,5 @@
 
-Package: isc-dhcp-server
+isc-dhcp-server [![Build Status](https://travis-ci.com/adonespitogo/node-isc-dhcp-server.svg?branch=master)](https://travis-ci.com/adonespitogo/node-isc-dhcp-server)
 ---
 
 NodeJS pagckage for managing [isc-dhcp-server](https://wiki.debian.org/DHCP_Server).
@@ -108,6 +108,10 @@ API
   - router(array) - ip/s of gateway(s)
   - dns(array) - dns servers
   - broadcast(string) - broadcast address
+
+
+***server.validate()***
+  - (returns a promise) validate configuration (also called before `server.start()` and `server.restart()`)
 
 ***server.start()***
   - (returns a promise) start the server

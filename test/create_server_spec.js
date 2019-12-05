@@ -33,7 +33,10 @@ describe('Testing isc-dhcp-server package', () => {
 
     new_config = Object.assign({}, config)
     new_config.router = ['new router ip']
-    validate = sinon.fake.resolves(new_config)
+    validate = {
+      validateConfig: sinon.fake.resolves(new_config),
+      validateAll: sinon.fake.resolves()
+    }
 
     dhcp = proxyquire('../src/index.js', {
       './validate_config.js': validate,
@@ -55,7 +58,9 @@ describe('Testing isc-dhcp-server package', () => {
 
       it('should indicate which interace has config error', () => {
         var error = 'some error'
-        validate = sinon.fake.resolves(Promise.reject(error))
+        validate = {
+          validateConfig: sinon.fake.resolves(Promise.reject(error))
+        }
         dhcp = proxyquire('../src/index.js', {
           './validate_config.js': validate,
         })
@@ -67,14 +72,19 @@ describe('Testing isc-dhcp-server package', () => {
 
       it('should validate array config', () => {
         var error = 'some error'
-        validate = sinon.fake.resolves(config)
+        validate = {
+          validateConfig:  sinon.fake.resolves(config),
+          validateAll: sinon.fake.resolves()
+        }
         dhcp = proxyquire('../src/index.js', {
           './validate_config.js': validate,
         })
         var s = dhcp.createServer([config])
         return s.validate().then(cfg => {
           expect(cfg).to.eql([config])
-          sinon.assert.calledWithExactly(validate, config)
+          sinon.assert.calledWithExactly(validate.validateConfig, config)
+          sinon.assert.calledWithExactly(validate.validateAll, [config])
+          sinon.assert.callOrder()
         })
       })
 
@@ -87,7 +97,8 @@ describe('Testing isc-dhcp-server package', () => {
       var s = dhcp.createServer([config])
       return s.prestart()
         .then(() => {
-          sinon.assert.calledWithExactly(validate, config)
+          sinon.assert.calledWithExactly(validate.validateConfig, config)
+          sinon.assert.calledWithExactly(validate.validateAll, [new_config])
           sinon.assert.calledWithExactly(writer.iscDefaultConfig, [new_config])
           sinon.assert.calledWithExactly(writer.dhcpdConfig, [new_config])
         })
