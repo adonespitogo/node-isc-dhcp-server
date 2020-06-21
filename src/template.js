@@ -57,7 +57,7 @@ exports.generateConfig = (config) => {
 
   var ret = default_tpl + `
 ${result.trim()}
-${exports.generateOnCommit(config.on_commit)}
+${exports.generateOnCommit(config[0].on_commit)}
 `
   return ret.trim()
 
