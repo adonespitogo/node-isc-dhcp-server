@@ -33,7 +33,12 @@ var s = dhcp.createServer({
   netmask: '255.255.255.0',
   router: '192.168.3.1',        // can be string or array
   dns: ["8.8.8.8", "8.8.4.4"],  // can be string or array
-  broadcast: '192.168.3.255'
+  broadcast: '192.168.3.255',
+  on_commit: `
+    //set your script here
+    set ClientIP = binary-to-ascii(10, 8, ".", leased-address);
+    execute("/usr/bin/curl", concat("http://localhost/check-ip?ip=", ClientIP));
+  `
 });
 
 s.start().then(() => {
