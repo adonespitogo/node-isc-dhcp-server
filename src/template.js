@@ -3,6 +3,7 @@
 var subnet_tpl = require('./templates/subnet.js')
 var static_tpl = require('./templates/static.js')
 var default_tpl = require('./templates/default.js')
+var oncommit_tpl = require("./templates/on_commit.js")
 
 exports.generateSubnet = (config) => {
 
@@ -43,6 +44,11 @@ exports.generateStatic = (hosts) => {
   return tpl
 }
 
+exports.generateOnCommit = (script)=>{
+  if(!script) return ''
+  return oncommit_tpl.replace('[ON_COMMIT]', script)
+}
+
 exports.generateConfig = (config) => {
   config = Array.isArray(config)? config : [config]
   var result = config.reduce((fin, cfg) => {
@@ -51,6 +57,7 @@ exports.generateConfig = (config) => {
 
   var ret = default_tpl + `
 ${result.trim()}
+${exports.generateOnCommit(config[0].on_commit)}
 `
   return ret.trim()
 
