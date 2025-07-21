@@ -23,8 +23,6 @@ describe('Testing validate_config.js', () => {
   })
 
   describe('validateConfig()', () => {
-
-
     it('should reject error if required options missing', () => {
       var required_opts = [
         'interface',
