@@ -9,13 +9,13 @@ exports.generateSubnet = (config) => {
 
   var options_router = 'option routers '
   config.router.forEach((r, i) => {
-    options_router += (i > 0 ? ', ': '') + r
+    options_router += (i > 0 ? ', ' : '') + r
   })
   options_router += ';'
 
   var options_dns = 'option domain-name-servers '
   config.dns.forEach((r, i) => {
-    options_dns += (i > 0 ? ', ': '') + r
+    options_dns += (i > 0 ? ', ' : '') + r
   })
   options_dns += ';'
 
@@ -44,20 +44,20 @@ exports.generateStatic = (hosts) => {
   return tpl
 }
 
-exports.generateOnCommit = (script)=>{
-  if(!script) return ''
+exports.generateOnCommit = (script) => {
+  if (!script) return ''
   return oncommit_tpl.replace('[ON_COMMIT]', script)
 }
 
 exports.generateConfig = (config) => {
-  config = Array.isArray(config)? config : [config]
+  config = Array.isArray(config) ? config : [config]
   var result = config.reduce((fin, cfg) => {
-    return fin + '\n' + exports.generateSubnet(cfg).trim() 
+    return fin + '\n' + exports.generateSubnet(cfg).trim()
   }, '')
 
   var ret = default_tpl + `
 ${result.trim()}
-${exports.generateOnCommit(config[0].on_commit)}
+${config[0] ? exports.generateOnCommit(config[0].on_commit) : ''}
 `
   return ret.trim()
 
